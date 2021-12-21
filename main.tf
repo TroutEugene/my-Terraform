@@ -8,7 +8,7 @@ module "network" {
   version = "4.0.1"
 
   project_id   = var.projID
-  network_name = var.network
+  network_name = "ha-wp-vpc"
   routing_mode = "GLOBAL"
 
    subnets = [
@@ -43,13 +43,16 @@ module "network" {
 
 }
 
+
+
 resource "google_service_account" "service_account" {
   account_id   = "wp-service-id"
   display_name = "WordPress service"
+  project      = var.projID
 }
 
 resource "google_project_iam_member" "service_acc_iam" {
-  member  = "serviceAccount:${google_service_account.service-account.email}"
+  member  = "serviceAccount:wp-service-id@gcp101388-educoeychernen.iam.gserviceaccount.com"
   project = var.projID
   role    = "roles/storage.objectAdmin"
 }
@@ -161,12 +164,12 @@ resource "google_compute_instance_template" "wp-inst-tp" {
   }
 
   network_interface {
-    network    = var.network
+    network    = "ha-wp-vpc"
     subnetwork = "subnet-02"
   }
 
   service_account {
-    email  = google_service_account.service_account.email
+    email  = "wp-service-id@gcp101388-educoeychernen.iam.gserviceaccount.com"
     scopes = ["cloud-platform"]
   }
 }
@@ -271,18 +274,18 @@ resource "google_compute_url_map" "wp-lb-url-map" {
   default_service = google_compute_backend_service.backend-service.id
 }
 
-resource "google_compute_router" "gw-for-inst-group" {
-  encrypted_interconnect_router = "false"
-  name                          = "router-wp-insts"
-  network                       = var.network
-  region                        = "europe-central2"
-}
-
 resource "google_compute_global_forwarding_rule" "forward-rule" {
   name                  = "wp-ha-forwarding-rule"
+  #backend_service       = google_compute_backend_service.backend-service.id
   ip_protocol           = "TCP"
+  #all_ports             = "false"
+  #allow_global_access   = "false"
   load_balancing_scheme = "EXTERNAL"
+  #network_tier          = "PREMIUM"
+  #ports                 = ["443", "80"]
   port_range            = "80"
   target                = google_compute_target_http_proxy.lb-target.id
   ip_address            = google_compute_global_address.gb-lb-adress.id
+  #network               = "ha-wp-vpc"
+  #subnetwork            = "subnet-01"
 }
