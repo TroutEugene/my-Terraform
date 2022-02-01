@@ -1,13 +1,13 @@
 resource "google_compute_instance_template" "wp-inst-tp" {
-  name        = "wp-inst-tp"
-  description = "template for wordpress instance."
+  name        = var.template-name
+  description = var.template-desc
 
   metadata = {
-    startup-script = file("${path.module}/startup.sh")
+    startup-script = var.startup-script
   }
 
   instance_description = "wp instance"
-  machine_type         = "e2-micro"
+  machine_type         = var.machine-size
   can_ip_forward       = false
 
   disk {
@@ -15,7 +15,7 @@ resource "google_compute_instance_template" "wp-inst-tp" {
     auto_delete       = true
     boot              = true
     disk_type         = "pd-ssd"
-    disk_size_gb      = "10"
+    disk_size_gb      = var.disk-size
   }
 
   scheduling {

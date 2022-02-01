@@ -1,6 +1,6 @@
 resource "google_storage_bucket" "static-wordpress" {
-  name          = "wp-front"
-  location      = "EU"
+  name          = var.bucket-name
+  location      = var.location
   force_destroy = true
 }
 

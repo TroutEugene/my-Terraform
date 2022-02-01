@@ -1,28 +1,28 @@
 resource "google_compute_health_check" "wp-hp-check" {
-  name                = "health-check-wp-inst"
+  name                = var.health-check-name
   check_interval_sec  = 90
   timeout_sec         = 5
   healthy_threshold   = 1
   unhealthy_threshold = 3
 
   tcp_health_check {
-    port = "22"
+    port = var.health-check-port
   }
 }
 
 resource "google_compute_region_instance_group_manager" "wp-inst-group" {
-  base_instance_name               = "wordpress-instance"
+  base_instance_name               = var.base-inst-name
   distribution_policy_target_shape = "EVEN"
-  distribution_policy_zones        = ["europe-central2-a", "europe-central2-b", "europe-central2-c"]
-  name                             = "wordpress-instance-group"
-  region                           = "europe-central2"
-  target_size                      = "2"
+  distribution_policy_zones        = var.distrib-zones
+  name                             = var.inst-group-name
+  region                           = var.inst-group-region
+  target_size                      = var.inst-group-size
 
   depends_on                       = [google_compute_health_check.wp-hp-check]
 
   update_policy {
     instance_redistribution_type = "PROACTIVE"
-    max_surge_fixed              = "3"
+    max_surge_fixed              = var.size-overload
     max_unavailable_fixed        = "3"
     minimal_action               = "REPLACE"
     replacement_method           = "SUBSTITUTE"
@@ -30,8 +30,8 @@ resource "google_compute_region_instance_group_manager" "wp-inst-group" {
   }
 
   named_port {
-    name = "forward-port"
-    port = 80
+    name = var.named-port-name
+    port = var.named-port-port
   }
 
   auto_healing_policies {

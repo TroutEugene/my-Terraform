@@ -1,10 +1,10 @@
 resource "google_compute_global_address" "private_ip_address" {
-  name          = "private-ip-address"
+  name          = var.private-ip-ad-name
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
-  prefix_length = 24
+  prefix_length = var.private-ip-ad-prefix
   network       = var.network_id
-  address       = "10.10.21.0"
+  address       = var.private-ip-ad
 }
 
 resource "google_service_networking_connection" "private_vpc_connection" {
@@ -14,12 +14,12 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 }
 
 resource "google_sql_database_instance" "main-instance" {
-  name             = "db-sql-main"
-  region           = "europe-central2"
-  database_version = "MYSQL_5_7"
+  name             = var.db-instance-name 
+  region           = var.database-region
+  database_version = var.database-version
   depends_on = [google_service_networking_connection.private_vpc_connection]
   settings {
-    tier = "db-f1-micro"
+    tier = var.database-size
 
     activation_policy = "ALWAYS"
     availability_type = "REGIONAL"
@@ -33,7 +33,7 @@ resource "google_sql_database_instance" "main-instance" {
     backup_configuration {
       enabled                        = "true"
       binary_log_enabled             = "true"
-      location                       = "eu"
+      location                       = var.db-backup-location
       point_in_time_recovery_enabled = "false"
       start_time                     = "17:00"
     }
@@ -49,7 +49,7 @@ resource "google_sql_database_instance" "main-instance" {
 
 resource "google_sql_database" "main-database" {
   charset  = "utf8"
-  name     = "wordpress"
+  name     = var.database-name
   instance = google_sql_database_instance.main-instance.name
 }
 
