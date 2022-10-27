@@ -1,12 +1,29 @@
-# Module Secret Manager IAM
+# Module instance group
 
-This optional module is used to assign secrets roles
+This module is used to create instance groups
 
 ## Usage
 
 ```hcl
-module "secret_manager_iam" {
-
+module "instance_group" {
+  source            = "./modules/instance_group"
+  wp-inst-tp-id     = "inst-id"
+  health-check-name = "health-check-wp-inst"
+  health-check-port = "22"
+  base-inst-name    = "wordpress-instance"
+  inst-group-name   = "wordpress-instance-group"
+  distrib-zones     = ["europe-central2-a", "europe-central2-b", "europe-central2-c"]
+  inst-group-size   = "2"
+  update_policy = {
+    instance_redistribution_type = "PROACTIVE"
+    max_surge_fixed              = "3"
+    max_unavailable_fixed        = "3"
+    minimal_action               = "REPLACE"
+    replacement_method           = "SUBSTITUTE"
+    type                         = "OPPORTUNISTIC"
+  }
+  named-port-name   = "forward-port"
+  named-port-port   = 80
 }
 ```
 
@@ -15,18 +32,21 @@ module "secret_manager_iam" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| bindings | Map of role (key) and list of members (value) to add the IAM policies/bindings | `map(any)` | n/a | yes |
-| conditional\_bindings | List of maps of role and respective conditions, and the members to add the IAM policies/bindings | <pre>list(object({<br>    role        = string<br>    title       = string<br>    description = string<br>    expression  = string<br>    members     = list(string)<br>  }))</pre> | `[]` | no |
-| mode | Mode for adding the IAM policies/bindings, additive and authoritative | `string` | `"additive"` | no |
-| project | Project to add the IAM policies/bindings | `string` | `""` | no |
-| secrets | Secret Manager Secrets list to add the IAM policies/bindings | `list(string)` | `[]` | no |
+| wp-inst-tp-id | instance template id | `string` | n/a | yes |
+| update policy | The update policy for this managed instance group | <pre>object({<br>    instance_redistribution_type        = string<br>    max_surge_fixed       = string<br>    max_unavailable_fixed = string<br>    minimal_action  = string<br>    replacement_method     = string<br>    type     = string<br>  })</pre> | `[]` | no |
+| health-check-name | name of healthcheck | `string` | n/a | yes |
+| health-check-port | port of healthcheck | `string` | n/a | yes |
+| base-inst-name | The base instance name to use for instances in this group | `string` | n/a | yes |
+| inst-group-name | name of instance group manager | `string` | n/a | yes |
+| distrib-zones | distribution zones | `list(string)` | n/a | no |
+| inst-group-region | region of instance group | `string` | n/a | no |
+| named-port-name | name of the named port | `string` | n/a | yes |
+| named-port-port | port of the named port | `string` | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| members | Members which were bound to the Secret Manager Secrets. |
-| roles | Roles which were assigned to members. |
-| secrets | Secret Manager Secrets which received for bindings. |
+| wp-inst-group-id | id of instance groups |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
