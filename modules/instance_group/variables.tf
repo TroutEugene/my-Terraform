@@ -10,11 +10,9 @@ variable "health-check-port" {
   description = "health check port"
 }
 variable "base-inst-name" {
-  type        = string
   description = "base name of groups instance"
 }
 variable "inst-group-name" {
-  type        = string
   description = "name of the instance group"
 }
 variable "distrib-zones" {
@@ -29,10 +27,6 @@ variable "inst-group-size" {
   type        = string
   description = "base number of instances in a group"
 }
-variable "size-overload" {
-  type        = string
-  description = "maximum number of instances that can be created above targetSize"
-}
 variable "named-port-name" {
   type        = string
   description = "named port name"
@@ -40,4 +34,31 @@ variable "named-port-name" {
 variable "named-port-port" {
   type        = number
   description = "named port port number"
+}
+variable "check_interval_sec" {
+  default = 90
+}
+variable "timeout_sec" {
+  default = 5
+}
+variable "healthy_threshold" {
+  default = 1
+}
+variable "unhealthy_threshold" {
+  default = 3
+}
+variable "distribution_policy_target_shape" {
+  default = "EVEN"
+}
+variable "wait_for_instances_status" {
+  default = "STABLE"
+}
+variable "initial_delay_sec" {
+  default = 300
+}
+variable "update_policy" {
+  default = {}
+}
+variable "number_of_groups" {
+  default = 1
 }

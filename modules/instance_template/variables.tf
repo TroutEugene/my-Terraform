@@ -19,10 +19,6 @@ variable "machine-size" {
   type        = string
   description = "machine size"
 }
-variable "disk-size" {
-  type        = string
-  description = "disk size"
-}
 variable "subnetwork" {
   type        = string
   description = "subnetwork id"
@@ -30,4 +26,22 @@ variable "subnetwork" {
 variable "service-acc" {
   type        = string
   description = "service-acc id"
+}
+variable "instance_description" {
+  default = ""
+}
+variable "can_ip_forward" {
+  default = false
+}
+variable "disk" {
+  default = {}
+}
+variable "service_account_scope" {
+  default = ["cloud-platform"]
+}
+variable "automatic_restart" {
+  default = true
+}
+variable "on_host_maintenance" {
+  default = "MIGRATE"
 }

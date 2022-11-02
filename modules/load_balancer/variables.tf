@@ -1,9 +1,6 @@
 variable "network" {
   type    = string
 }
-variable "group-name" {
-  type    = string
-}
 variable "lb-hp-check-name" {
   type        = string
   description = "load balancers health check name"
@@ -39,4 +36,40 @@ variable "fw-rule-name" {
 variable "fw-rule-ports" {
   type        = string
   description = "port range of the loadbalancers forwarding rule"
+}
+variable "check_interval_sec" {
+  default = 90
+}
+variable "timeout_sec" {
+  default = 5
+}
+variable "healthy_threshold" {
+  default = 1
+}
+variable "unhealthy_threshold" {
+  default = 3
+}
+variable "affinity_cookie_ttl_sec" {
+  default = "0"
+}
+variable "backend" {
+  default = {}
+}
+variable "connection_draining_timeout_sec" {
+  default = "300"
+}
+variable "enable_cdn" {
+  default = false
+}
+variable "load_balancing_scheme" {
+  default = "EXTERNAL"
+}
+variable "protocol" {
+  default = "HTTP"
+}
+variable "session_affinity" {
+  default = "CLIENT_IP"
+}
+variable "ip_protocol" {
+  default = "TCP"
 }

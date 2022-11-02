@@ -6,21 +6,21 @@ resource "google_compute_instance_template" "wp-inst-tp" {
     startup-script = var.startup-script
   }
 
-  instance_description = "wp instance"
+  instance_description = var.instance_description
   machine_type         = var.machine-size
-  can_ip_forward       = false
+  can_ip_forward       = var.can_ip_forward
 
   disk {
-    source_image      = "debian-cloud/debian-10"
-    auto_delete       = true
-    boot              = true
-    disk_type         = "pd-ssd"
-    disk_size_gb      = var.disk-size
+    source_image      = lookup(var.disk, "source_image", null)
+    auto_delete       = lookup(var.disk, "auto_delete", null)
+    boot              = lookup(var.disk, "boot", null)
+    disk_type         = lookup(var.disk, "disk_type", null)
+    disk_size_gb      = lookup(var.disk, "disk_size_gb", null)
   }
 
   scheduling {
-    automatic_restart   = "false"
-    on_host_maintenance = "MIGRATE"
+    automatic_restart   = var.automatic_restart
+    on_host_maintenance = var.on_host_maintenance
   }
 
   network_interface {
@@ -30,6 +30,6 @@ resource "google_compute_instance_template" "wp-inst-tp" {
 
   service_account {
     email  = var.service-acc
-    scopes = ["cloud-platform"]
+    scopes = var.service_account_scope
   }
 }

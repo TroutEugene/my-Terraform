@@ -1,12 +1,15 @@
-variable "service-acc" {
+variable "owner_account" {
   type        = string
-  description = "service account email"
+  description = "owner account email"
 }
-variable "bucket-name" {
+variable "bucket_name" {
   type        = string
   description = "name of the bucket"
 }
 variable "location" {
   type        = string
   description = "location of the bucket"
+}
+variable "" {
+  
 }
